@@ -2,10 +2,17 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const app = express()
-
+//cors
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 //app.use(mongoose)
 app.options('*', cors())
+//Для чтения formData
 const multer = require('multer')
+const upload = multer()
 //работа с изображениями GraphicsMagick 
 const gm = require('gm');
 //работа с файлами
@@ -149,55 +156,55 @@ app.use(bodyParser.json());
 //Обработка формы добавления услуги
 
 
-app.post('/addservice', as.single("userfile"), async (req, res) => {
-    //console.log(req.body);
-    // let filedata = req.file;
-    // console.log(filedata);
-    res.set("Access-Control-Allow-Origin", '*');
+// app.post('/addservice', as.single("userfile"), async (req, res) => {
+//     //console.log(req.body);
+//     // let filedata = req.file;
+//     // console.log(filedata);
+//     res.set("Access-Control-Allow-Origin", '*');
 
 
-    mongoose.connect("mongodb://yura:123456@localhost:27017/website", { useUnifiedTopology: true, useNewUrlParser: true });
-    //console.log(req.body.parentservices);
-    //const pservices = req.body.parentservices;
-    // const parservices = pservices.map(function (parservice) {
-    //     console.log(parservice);
-    //     //       content: sotrudnik.content.rendered,
-    // });
+//     mongoose.connect("mongodb://yura:123456@localhost:27017/website", { useUnifiedTopology: true, useNewUrlParser: true });
+//     //console.log(req.body.parentservices);
+//     //const pservices = req.body.parentservices;
+//     // const parservices = pservices.map(function (parservice) {
+//     //     console.log(parservice);
+//     //     //       content: sotrudnik.content.rendered,
+//     // });
 
-    //res.send(parservices);
-
-
-    const service = new Service({
-        paretn_service: req.body.parentservices,
-        name_service: req.body.nameservice,
-        min_price_service: req.body.minpriceservice,
-    });
+//     //res.send(parservices);
 
 
-    await service.save(function (err) {
+//     const service = new Service({
+//         paretn_service: req.body.parentservices,
+//         name_service: req.body.nameservice,
+//         min_price_service: req.body.minpriceservice,
+//     });
 
-        //mongoose.disconnect();  // отключение от базы данных
 
-        if (err) return console.log(err);
-        console.log("Сохранен объект", service);
-        // Service.find(function (err, services) {
-        //     if (err) return console.error(err);
-        //     console.log(services);
-        //     //res.send(services);
-        mongoose.disconnect();  // отключение от базы данных
-        // });
-        console.log('wwwwwwwwwwwww');
-        res.end();
-    });
+//     await service.save(function (err) {
 
-    //console.log('qqqqqqqqqqqqqqqqqqqqqqqqqqq');
+//         //mongoose.disconnect();  // отключение от базы данных
 
-});
+//         if (err) return console.log(err);
+//         console.log("Сохранен объект", service);
+//         // Service.find(function (err, services) {
+//         //     if (err) return console.error(err);
+//         //     console.log(services);
+//         //     //res.send(services);
+//         mongoose.disconnect();  // отключение от базы данных
+//         // });
+//         console.log('wwwwwwwwwwwww');
+//         res.end();
+//     });
+
+//     //console.log('qqqqqqqqqqqqqqqqqqqqqqqqqqq');
+
+// });
 ////////////////Получить список услуг 
 
 app.get("/services", (req, res) => {
 
-    res.set("Access-Control-Allow-Origin", '*');
+    //res.set("Access-Control-Allow-Origin", '*');
 
 
     // подключение
@@ -223,7 +230,7 @@ app.post('/addinteres', arhImgInteres.single("userfile"), (req, res) => {
     console.log(req.body);
     // let filedata = req.file;
     // console.log(filedata);
-    res.set("Access-Control-Allow-Origin", '*');
+    //res.set("Access-Control-Allow-Origin", '*');
 
 
     mongoose.connect("mongodb://yura:123456@localhost:27017/website", { useUnifiedTopology: true, useNewUrlParser: true });
@@ -280,33 +287,97 @@ app.post('/test', (req, res) => {
 
 });
 
+////////////////
+
+/////////////////////
+
+app.get('/admin/spisokservices', (req, res) => {
+
+    //res.set("Access-Control-Allow-Origin", '*');
+
+
+    // подключение
+    mongoose.connect("mongodb://chivic:Pervil-9@89.108.64.98:27017/chivic", { useUnifiedTopology: true, useNewUrlParser: true });
+
+
+    Service.find(function (err, services) {
+        if (err) return console.error(err);
+        //console.log(services);
+        res.send(services);
+        mongoose.disconnect();  // отключение от базы данных
+    });
+
+    //
+
+});
+
+
 
 ////////////////
 
-app.post('/test/form', (req, res) => {
-
-    res.set("Access-Control-Allow-Origin", '*');
+app.post('/admin/addservice', (req, res) => {
+    // Функция удаления пробелов(для преобразования стоимости услуги из текста в number)
+    function del_spaces(str) {
+        str = str.replace(/\s/g, '');
+        return str;
+    }
+    /////////////////////////
+    //res.set("Access-Control-Allow-Origin", '*');
     console.log('test/form');
-    console.log(req.body.aaa);
+
 
     // // подключение
-    mongoose.connect("mongodb://UserTest:UserTest@localhost:27017/test", { useUnifiedTopology: true, useNewUrlParser: true });
+    mongoose.connect("mongodb://chivic:Pervil-9@89.108.64.98:27017/chivic", { useUnifiedTopology: true, useNewUrlParser: true });
+    console.log(req.body.name);
+    console.log(req.body.editor);
+    console.log(req.body.cena);
+    let cena = del_spaces(req.body.cena);
+    let cenafinal = Number(cena);
+    console.log(cenafinal);
 
     //const Service = mongoose.model("Service", TestService);
-    const testservice = new TestService({
-        nameService: req.body.aaa,
-        ageService: req.body.ccc,
-        aboutService: req.body.ddd,
+    const addservice = new Service({
+        nameService: req.body.name,
+        aboutService: req.body.editor,
+        minPriceService: cenafinal,
+
     });
 
-    testservice.save(function (err) {
-        mongoose.disconnect();  // отключение от базы данных
+    addservice.save(function (err) {
+
+        Service.find(function (error, services) {
+            if (error) return console.error(error);
+            //console.log(services);
+            res.send(services);
+            mongoose.disconnect();  // отключение от базы данных
+        });
+
+
 
         if (err) return console.log(err);
-        console.log("Сохранен объект", testservice);
+        console.log("Сохранен объект", addservice);
+        //res.end();
     });
 });
 ////////////////// 
+//Удаление service
+app.delete('/admin/delservice/:idservice', async (req, res) => {
+    let sss = req.params.idservice;
+    mongoose.connect("mongodb://chivic:Pervil-9@89.108.64.98:27017/chivic", { useUnifiedTopology: true, useNewUrlParser: true });
+    await Service.deleteOne({ _id: sss }, (error, mongooseDeleteResult) => {
+        // res.send(mongooseDeleteResult);
+        Service.find(function (error, services) {
+            if (error) return console.error(error);
+            console.log(services);
+            res.send([services, mongooseDeleteResult]);
+            mongoose.disconnect();  // отключение от базы данных
+        });
+
+    });
+
+
+
+});
 
 
 ////////////////
@@ -368,7 +439,7 @@ app.post('/multiple-files', (req, res) => {
 
 
     res.send("<h2>Привет Express!</h2>");
-    console.log(req.files);
+    console.log(req.body);
 });
 // console.log(requ);
 // res.send(requ);
@@ -437,6 +508,144 @@ app.post('/formform', avatar.single('avatar'), function (req, res) {
 
 
 //console.log('igor');
+//const csv = require('csv-parser');
+app.post('/gencsv', upload.single('file'), (req, res) => {
+
+    //для преобразования русских букв в английские не забыть: word = word.toLowerCase();(перевести заглавные в строчные)
+    var translet = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd',
+        'е': 'e', 'ё': 'e', 'ж': 'zh', 'з': 'z', 'и': 'i',
+        'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n',
+        'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't',
+        'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'ch',
+        'ш': 'sh', 'щ': 'sch', 'ь': '', 'ы': 'y', 'ъ': '',
+        'э': 'e', 'ю': 'yu', 'я': 'ya', '.': ''
+
+
+    };
+    res.set('Access-Control-Allow-Origin', '*')
+    //console.log(req.body.idgrup);
+    console.log(req.file);
+    let buffer = req.file.buffer.toString();
+    //console.log(buffer);
+    let array_buffer = buffer.split('\r\n');
+    //console.log(array_buffer);
+    // В конце массива - пустой элемент('')
+    //удалим
+    let array_buffer1 = array_buffer.filter(function (elem) {
+        return elem != '';
+    });
+    //console.log(array_buffer1);
+    // let array_buffer1 = array_buffer.map(function (item, i) {
+    //     return item.replace(/\r/, '');
+    // })
+    //let array_str_final = [];
+    let array_str = [];
+
+    // console.log(array_buffer1);
+    array_buffer1.forEach(function (str, index) {
+        let array_str_item = [];
+
+        //каждую строку (кроме первой- которую не добавляем в итоговый массив)преобразуем в массив разделмтель ; (должен совпадать с разделителем в закачиваемом csv файле)
+        if (index != 0) {
+            let strarr = str.split(';');
+
+            let firstname = strarr[0] + ' ' + strarr[1] + ' ' + strarr[2];
+            strarr.push(firstname);
+            let lastname = req.body.idgrup;
+            strarr.push(lastname);
+            //console.log(strarr);
+            //преобразуем массив в массив где элементы только из строчных символов
+            let strarrlowercase = strarr.map(
+                function (a, i) {
+                    //транскрипция только не для поля firstname
+                    if (i != 4 && i != 5) {
+                        let answer = "";
+
+                        a = a.toLowerCase();
+                        //Транскрипция
+                        for (var i = 0; i < a.length; ++i) {
+
+                            if (translet[a[i]] == undefined) {
+                                answer += a[i];
+                            } else {
+                                answer += translet[a[i]];
+                            }
+                        }
+                        //////////////
+                        return answer;
+                    }
+                    else {
+                        return a;
+                    }
+                }
+            );
+            console.log(strarrlowercase);
+            //оставляем первые буквы(английские) в имени и отчестве
+            let strarrlowercaseio = strarrlowercase.map(
+                function (a, index) {
+
+                    if (index == 1 || index == 2) {
+                        aio = a[0];
+                    }
+                    else {
+                        aio = a
+                    }
+
+                    //let answer = "";
+                    //a = a.toLowerCase();
+
+                    //////////////
+                    return aio;
+                }
+
+
+
+
+            );
+
+
+            array_str.push(strarrlowercaseio);
+            //console.log(firstname);
+            //array_str.push(firstname);
+        }
+        //    console.log(array_str);
+
+        //global.firstname;
+    });
+
+    //формируем строки финального массива(из которого сформируем csv)
+    let array_str_final = array_str.map(function (el, index) {
+        // if (index == 0) {
+        //     finalel = ['username', 'password', 'firstname', 'lastname', 'email'];
+        // }
+        // else {
+
+        let username = el[0] + el[1] + el[2] + el[3];
+        let firstname = el[4];
+        let lastname = el[5];
+        let email = username + '@pochta.invalid';
+        let password = 123456;
+        let finalel = [username, password, firstname, lastname, email];
+
+        return finalel;
+    })
+    //добавляем 
+    array_str_final.unshift(['username', 'password', 'firstname', 'lastname', 'email']);
+    ////////////////////////////////////////////////////////
+
+    console.log(array_str_final);
+    var str = '';
+    for (var i = 0; i < array_str_final.length; i++) {
+        let line = '';
+        line = array_str_final[i].join(",");
+        str += line + '\r\n';
+    }
+    console.log(str);
+
+    res.send(str);
+});
+
 
 app.listen(3001);
 

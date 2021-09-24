@@ -12,18 +12,18 @@
         />
 
         <q-toolbar-title>
-          <q-avatar>
+          <!-- <q-avatar>
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg" />
-          </q-avatar>
-          Title
+          </q-avatar> -->
+          Админ панель сайта chivic.ru и не только
         </q-toolbar-title>
       </q-toolbar>
 
-      <q-tabs align="left">
+      <!-- <q-tabs align="left">
         <q-route-tab to="/page1" label="Page One" />
         <q-route-tab to="/page2" label="Page Two" />
         <q-route-tab to="/page3" label="Page Three" />
-      </q-tabs>
+      </q-tabs> -->
     </q-header>
 
     <q-drawer
@@ -138,15 +138,30 @@
         <q-expansion-item
           :content-inset-level="0.5"
           expand-separator
-          icon="mail"
-          label="Услуги"
+          icon="build"
+          label="Услуги, технологии. "
           default-opened
         >
-          <q-item clickable :to="addservice">
-            <q-item-section>Добавление услуги</q-item-section>
+          <q-item clickable :to="{ name: 'addservice' }">
+            <q-item-section>Услуги</q-item-section>
           </q-item>
-          <q-item clickable to="test">
-            <q-item-section>Тэст</q-item-section>
+          <q-item clickable :to="{ name: 'test' }">
+            <q-item-section>Технологии</q-item-section>
+          </q-item>
+        </q-expansion-item>
+
+        <q-expansion-item
+          :content-inset-level="0.5"
+          expand-separator
+          icon="how_to_reg"
+          label="Moodle(генерация CSV)"
+          default-opened
+        >
+          <!-- <q-item clickable :to="{ name: 'Moodle', params: { id: 1 } }">
+            <q-item-section>Аграрный колледж</q-item-section>
+          </q-item> -->
+          <q-item clickable :to="{ name: 'VueMoodle', params: { id: 2 } }">
+            <q-item-section>Аграрные колледж)</q-item-section>
           </q-item>
         </q-expansion-item>
       </q-list>
@@ -156,7 +171,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer elevated class="bg-grey-8 text-white">
+    <!-- <q-footer elevated class="bg-grey-8 text-white">
       <q-toolbar>
         <q-toolbar-title>
           <q-avatar>
@@ -165,7 +180,7 @@
           <div>Title</div>
         </q-toolbar-title>
       </q-toolbar>
-    </q-footer>
+    </q-footer> -->
   </q-layout>
 </template>
 
